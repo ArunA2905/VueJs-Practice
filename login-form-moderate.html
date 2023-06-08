@@ -8,9 +8,6 @@
     <body>
         <div id ="app">
            <login-form/>
-
-            <button @click="toggleBox">Toggle Box</button> 
-            <div v-if="isVisible" class="box1"></div>
         </div>
         <script>
             let app = Vue.createApp({
@@ -33,21 +30,44 @@
                 template: `
                     <form @submit.prevent="handleSubmit">
                         <h1>{{ title }}</h1>
-                        <input type="email" v-model="email" />
-                        <input type="password" v-model="password" />
+                        <custom-input v-model="email" :label="passwordLabel" />
+                        <custom-input v-model="password" :label="emailLabel" />
                         <button>Log in</button>
                     </form>
                 `,
+                components: ['custom-input'],
                 data() {
                     return  {
                         title: "Login Form",
                         email: '',
-                        password: ''
+                        password: '',
+                        emailLabel: 'Email',
+                        passwordLabel: 'Password'
                     }
                 },
                 methods: {
                     handleSubmit() {
                         console.log(this.email,this.password)
+                    }
+                }
+            })
+            app.component('custom-input', {
+                template: `
+                    <label>
+                        {{ label }}
+                        <input type="text" v-model="inputValue"/>
+                    </label> 
+                `,
+                props: ['label','modelValue'],
+                computed: {
+                    inputValue: {
+                        get() {
+                            return this.modelValue
+                        },
+                        set(value) {
+                            console.log(value)
+                            this.$emit('update:modelValue', value)
+                        }
                     }
                 }
             })
